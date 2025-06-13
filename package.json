@@ -9,16 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@web3auth/base": "^9.7.0",
-    "@web3auth/ethereum-provider": "^9.7.0",
-    "@web3auth/metamask-adapter": "^8.12.4",
-    "@web3auth/modal": "^9.7.0",
-    "@web3auth/openlogin-adapter": "^9.0.0-alpha.0",
-    "@web3auth/wallet-connect-v2-adapter": "^9.7.0",
-    "ethers": "^5.7.2",
+    "@dynamic-labs/ethereum": "^4.20.2",
+    "@dynamic-labs/ethers-v6": "^4.20.2",
+    "@dynamic-labs/sdk-react-core": "^4.20.2",
+    "ethers": "^6.14.4",
     "next": "^15.3.3",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "viem": "^2.31.1"
   },
   "devDependencies": {
     "@types/node": "^20",
