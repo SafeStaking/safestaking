@@ -1,20 +1,20 @@
 'use client';
 
-import React, { type ReactNode } from 'react';
+import React from 'react';
 import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core';
 import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
 
-interface Props {
-  children: ReactNode;
-}
+export default function DynamicProvider({ children }) {
+  if (!process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID) {
+    throw new Error('NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID is not set in .env.local');
+  }
 
-export default function DynamicProvider({ children }: Props): JSX.Element {
   return (
     <DynamicContextProvider
       settings={{
         environmentId: process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID!,
         walletConnectors: [EthereumWalletConnectors],
-        appName: 'Staking Platform',
+        appName: 'SafeStaking',
       }}
     >
       {children}

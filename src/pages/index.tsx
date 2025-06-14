@@ -29,7 +29,7 @@ export default function Home(): JSX.Element {
         <div className="px-4 py-6 sm:px-0">
           {walletConnected ? (
             <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-lg font-medium mb-4">Welcome!</h2>
+              <h2 className="text-lg font-medium mb-4">Welcome to SafeStaking !</h2>
               <p className="text-gray-600">Your wallet is connected.</p>
             </div>
           ) : (

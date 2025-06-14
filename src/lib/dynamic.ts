@@ -4,7 +4,7 @@ import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
 export const dynamicConfig = {
   environmentId: process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID!,
   walletConnectors: [EthereumWalletConnectors],
-  appName: 'Staking Platform',
+  appName: 'SafeStaking',
   appLogoUrl: '/logo.png',
   cssOverrides: `
     /* Custom styling to match your design */
