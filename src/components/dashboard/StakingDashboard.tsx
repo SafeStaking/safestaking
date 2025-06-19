@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import NumberFlow from '@number-flow/react';
 import { useStaking } from '../../hooks/useStaking';
 import { useDynamic } from '../../hooks/useDynamic';
 
@@ -13,38 +14,101 @@ export default function StakingDashboard() {
     refreshData 
   } = useStaking();
 
-  const formatNumber = (num: string | number, decimals: number = 4): string => {
+  // Animation state - start from 0 and animate to actual values
+  const [animatedValues, setAnimatedValues] = useState({
+    stETHBalance: 0,
+    ethBalance: 0,
+    totalValue: 0,
+    feePercentage: 0,
+    dailyReward: 0,
+    yearlyReward: 0,
+    stakedAmount: 0,
+    feePaid: 0,
+    stethReceived: 0,
+    totalStaked: 0,
+    totalStethDistributed: 0,
+    totalFeesCollected: 0,
+    totalUsers: 0,
+    currentFeeBps: 0
+  });
+
+  const formatNumber = (num: string | number, decimals: number = 4): number => {
     const parsed = typeof num === 'string' ? parseFloat(num) : num;
-    if (isNaN(parsed)) return '0';
-    return parsed.toFixed(decimals);
+    if (isNaN(parsed)) return 0;
+    return parsed;
   };
 
-  const formatLargeNumber = (num: string | number): string => {
+  const formatLargeNumber = (num: string | number): number => {
     const parsed = typeof num === 'string' ? parseFloat(num) : num;
-    if (isNaN(parsed)) return '0';
-    
-    if (parsed >= 1000000) {
-      return `${(parsed / 1000000).toFixed(2)}M`;
-    } else if (parsed >= 1000) {
-      return `${(parsed / 1000).toFixed(2)}K`;
-    }
-    return parsed.toFixed(2);
+    if (isNaN(parsed)) return 0;
+    return parsed;
   };
 
-  const calculateDailyReward = (): string => {
-    if (!balance?.stETHBalance) return '0';
+  const calculateDailyReward = (): number => {
+    if (!balance?.stETHBalance) return 0;
     const stETHAmount = parseFloat(balance.stETHBalance);
     const estimatedAPR = 3.2; // Lido's approximate APR
     const dailyReward = (stETHAmount * (estimatedAPR / 100)) / 365;
-    return dailyReward.toFixed(6);
+    return dailyReward;
   };
 
-  const calculateYearlyReward = (): string => {
-    if (!balance?.stETHBalance) return '0';
+  const calculateYearlyReward = (): number => {
+    if (!balance?.stETHBalance) return 0;
     const stETHAmount = parseFloat(balance.stETHBalance);
     const estimatedAPR = 3.2;
     const yearlyReward = stETHAmount * (estimatedAPR / 100);
-    return yearlyReward.toFixed(4);
+    return yearlyReward;
+  };
+
+  // Animate values when data loads or changes
+  useEffect(() => {
+    if (!isLoading && (balance || userStats || contractStats)) {
+      // Small delay to ensure smooth animation
+      const timer = setTimeout(() => {
+        setAnimatedValues({
+          stETHBalance: formatNumber(balance?.stETHBalance || '0'),
+          ethBalance: formatNumber(balance?.ethBalance || '0'),
+          totalValue: formatNumber(balance?.totalValue || '0'),
+          feePercentage: feePercentage,
+          dailyReward: calculateDailyReward(),
+          yearlyReward: calculateYearlyReward(),
+          stakedAmount: formatNumber(userStats?.stakedAmount || '0'),
+          feePaid: formatNumber(userStats?.feePaid || '0', 6),
+          stethReceived: formatNumber(userStats?.stethReceived || '0'),
+          totalStaked: formatLargeNumber(contractStats?.totalStaked || '0'),
+          totalStethDistributed: formatLargeNumber(contractStats?.totalStethDistributed || '0'),
+          totalFeesCollected: formatNumber(contractStats?.totalFeesCollected || '0', 6),
+          totalUsers: contractStats?.totalUsers || 0,
+          currentFeeBps: contractStats?.currentFeeBps || 0
+        });
+      }, 100); // 100ms delay for smooth animation
+
+      return () => clearTimeout(timer);
+    }
+  }, [balance, userStats, contractStats, feePercentage, isLoading]);
+
+  // Reset animation on refresh
+  const handleRefresh = async () => {
+    // Reset to 0 first
+    setAnimatedValues({
+      stETHBalance: 0,
+      ethBalance: 0,
+      totalValue: 0,
+      feePercentage: 0,
+      dailyReward: 0,
+      yearlyReward: 0,
+      stakedAmount: 0,
+      feePaid: 0,
+      stethReceived: 0,
+      totalStaked: 0,
+      totalStethDistributed: 0,
+      totalFeesCollected: 0,
+      totalUsers: 0,
+      currentFeeBps: 0
+    });
+
+    // Refresh data
+    await refreshData();
   };
 
   if (isLoading) {
@@ -75,7 +139,7 @@ export default function StakingDashboard() {
           <p className="text-gray-600">Monitor your stETH balance, rewards, and platform statistics</p>
         </div>
         <button
-          onClick={refreshData}
+          onClick={handleRefresh}
           className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,10 +172,17 @@ export default function StakingDashboard() {
             <div>
               <p className="text-sm font-medium text-gray-600">stETH Balance</p>
               <p className="text-2xl font-bold text-gray-900">
-                {formatNumber(balance?.stETHBalance || '0')}
+                <NumberFlow 
+                  value={animatedValues.stETHBalance} 
+                  format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                />
               </p>
               <p className="text-sm text-gray-500">
-                ≈ {formatNumber(balance?.totalValue || '0')} ETH Total
+                ≈ <NumberFlow 
+                  value={animatedValues.totalValue} 
+                  format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                  suffix=" ETH Total"
+                />
               </p>
             </div>
             <div className="p-3 bg-blue-100 rounded-full">
@@ -128,7 +199,11 @@ export default function StakingDashboard() {
             <div>
               <p className="text-sm font-medium text-gray-600">Platform Fee</p>
               <p className="text-2xl font-bold text-orange-600">
-                {feePercentage.toFixed(2)}%
+                <NumberFlow 
+                  value={animatedValues.feePercentage} 
+                  format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+                  suffix="%"
+                />
               </p>
               <p className="text-sm text-gray-500">SafeStaking Fee</p>
             </div>
@@ -146,7 +221,10 @@ export default function StakingDashboard() {
             <div>
               <p className="text-sm font-medium text-gray-600">ETH Balance</p>
               <p className="text-2xl font-bold text-green-600">
-                {formatNumber(balance?.ethBalance || '0')}
+                <NumberFlow 
+                  value={animatedValues.ethBalance} 
+                  format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                />
               </p>
               <p className="text-sm text-gray-500">Available to Stake</p>
             </div>
@@ -164,7 +242,10 @@ export default function StakingDashboard() {
             <div>
               <p className="text-sm font-medium text-gray-600">Daily Rewards</p>
               <p className="text-2xl font-bold text-purple-600">
-                +{calculateDailyReward()}
+                +<NumberFlow 
+                  value={animatedValues.dailyReward} 
+                  format={{ minimumFractionDigits: 6, maximumFractionDigits: 6 }}
+                />
               </p>
               <p className="text-sm text-gray-500">ETH per day</p>
             </div>
@@ -176,6 +257,9 @@ export default function StakingDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Rest of the component continues with the same pattern... */}
+      {/* I'll continue with the detailed sections using animated values */}
 
       {/* Detailed Information */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -192,36 +276,72 @@ export default function StakingDashboard() {
             
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-gray-600">ETH Balance</span>
-              <span className="font-medium">{formatNumber(balance?.ethBalance || '0')} ETH</span>
+              <span className="font-medium">
+                <NumberFlow 
+                  value={animatedValues.ethBalance} 
+                  format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                  suffix=" ETH"
+                />
+              </span>
             </div>
             
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-gray-600">stETH Balance</span>
-              <span className="font-medium">{formatNumber(balance?.stETHBalance || '0')} stETH</span>
+              <span className="font-medium">
+                <NumberFlow 
+                  value={animatedValues.stETHBalance} 
+                  format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                  suffix=" stETH"
+                />
+              </span>
             </div>
             
             {userStats && (
               <>
                 <div className="flex justify-between items-center py-2 border-b">
                   <span className="text-gray-600">Total Staked via SafeStaking</span>
-                  <span className="font-medium">{formatNumber(userStats.stakedAmount)} ETH</span>
+                  <span className="font-medium">
+                    <NumberFlow 
+                      value={animatedValues.stakedAmount} 
+                      format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                      suffix=" ETH"
+                    />
+                  </span>
                 </div>
                 
                 <div className="flex justify-between items-center py-2 border-b">
                   <span className="text-gray-600">Total Fees Paid</span>
-                  <span className="font-medium text-orange-600">{formatNumber(userStats.feePaid, 6)} ETH</span>
+                  <span className="font-medium text-orange-600">
+                    <NumberFlow 
+                      value={animatedValues.feePaid} 
+                      format={{ minimumFractionDigits: 6, maximumFractionDigits: 6 }}
+                      suffix=" ETH"
+                    />
+                  </span>
                 </div>
                 
                 <div className="flex justify-between items-center py-2 border-b">
                   <span className="text-gray-600">Total stETH Received</span>
-                  <span className="font-medium text-green-600">{formatNumber(userStats.stethReceived)} stETH</span>
+                  <span className="font-medium text-green-600">
+                    <NumberFlow 
+                      value={animatedValues.stethReceived} 
+                      format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                      suffix=" stETH"
+                    />
+                  </span>
                 </div>
               </>
             )}
             
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-gray-600">Projected Yearly Reward</span>
-              <span className="font-medium text-green-600">+{calculateYearlyReward()} ETH</span>
+              <span className="font-medium text-green-600">
+                +<NumberFlow 
+                  value={animatedValues.yearlyReward} 
+                  format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                  suffix=" ETH"
+                />
+              </span>
             </div>
             
             <div className="flex justify-between items-center py-2">
@@ -239,28 +359,56 @@ export default function StakingDashboard() {
               <>
                 <div className="flex justify-between items-center py-2 border-b">
                   <span className="text-gray-600">Total ETH Staked</span>
-                  <span className="font-medium">{formatLargeNumber(contractStats.totalStaked)} ETH</span>
+                  <span className="font-medium">
+                    <NumberFlow 
+                      value={animatedValues.totalStaked} 
+                      format={{ 
+                        minimumFractionDigits: 2, 
+                        maximumFractionDigits: 2,
+                        notation: animatedValues.totalStaked >= 1000000 ? 'compact' : 'standard'
+                      }}
+                      suffix=" ETH"
+                    />
+                  </span>
                 </div>
                 
                 <div className="flex justify-between items-center py-2 border-b">
                   <span className="text-gray-600">Total stETH Distributed</span>
-                  <span className="font-medium">{formatLargeNumber(contractStats.totalStethDistributed)} stETH</span>
+                  <span className="font-medium">
+                    <NumberFlow 
+                      value={animatedValues.totalStethDistributed} 
+                      format={{ 
+                        minimumFractionDigits: 2, 
+                        maximumFractionDigits: 2,
+                        notation: animatedValues.totalStethDistributed >= 1000000 ? 'compact' : 'standard'
+                      }}
+                      suffix=" stETH"
+                    />
+                  </span>
                 </div>
                 
                 <div className="flex justify-between items-center py-2 border-b">
                   <span className="text-gray-600">Total Fees Collected</span>
-                  <span className="font-medium text-green-600">{formatNumber(contractStats.totalFeesCollected, 6)} ETH</span>
+                  <span className="font-medium text-green-600">
+                    <NumberFlow 
+                      value={animatedValues.totalFeesCollected} 
+                      format={{ minimumFractionDigits: 6, maximumFractionDigits: 6 }}
+                      suffix=" ETH"
+                    />
+                  </span>
                 </div>
                 
                 <div className="flex justify-between items-center py-2 border-b">
                   <span className="text-gray-600">Total Users</span>
-                  <span className="font-medium">{contractStats.totalUsers.toLocaleString()}</span>
+                  <span className="font-medium">
+                    <NumberFlow 
+                      value={animatedValues.totalUsers} 
+                      format={{ notation: 'standard' }}
+                    />
+                  </span>
                 </div>
                 
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-gray-600">Current Fee Rate</span>
-                  <span className="font-medium">{(contractStats.currentFeeBps / 100).toFixed(2)}%</span>
-                </div>
+                
 
                 <div className="flex justify-between items-center py-2 border-b">
                   <span className="text-gray-600">Fee Receiver</span>
@@ -283,7 +431,13 @@ export default function StakingDashboard() {
             
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-gray-600">Platform Fee</span>
-              <span className="font-medium text-orange-600">{feePercentage.toFixed(2)}%</span>
+              <span className="font-medium text-orange-600">
+                <NumberFlow 
+                  value={animatedValues.feePercentage} 
+                  format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+                  suffix="%"
+                />
+              </span>
             </div>
             
             <div className="flex justify-between items-center py-2">
@@ -308,16 +462,32 @@ export default function StakingDashboard() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">{formatNumber(userStats.stakedAmount)} ETH</p>
+              <p className="text-2xl font-bold text-gray-900">
+                <NumberFlow 
+                  value={animatedValues.stakedAmount} 
+                  format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                  suffix=" ETH"
+                />
+              </p>
               <p className="text-sm text-gray-600">Total Staked by You</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-orange-600">{formatNumber(userStats.feePaid, 6)} ETH</p>
+              <p className="text-2xl font-bold text-orange-600">
+                <NumberFlow 
+                  value={animatedValues.feePaid} 
+                  format={{ minimumFractionDigits: 6, maximumFractionDigits: 6 }}
+                  suffix=" ETH"
+                />
+              </p>
               <p className="text-sm text-gray-600">Total Fees Paid</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-green-600">
-                {((parseFloat(userStats.feePaid) / parseFloat(userStats.stakedAmount)) * 100).toFixed(3)}%
+                <NumberFlow 
+                  value={animatedValues.stakedAmount > 0 ? (animatedValues.feePaid / animatedValues.stakedAmount) * 100 : 0} 
+                  format={{ minimumFractionDigits: 3, maximumFractionDigits: 3 }}
+                  suffix="%"
+                />
               </p>
               <p className="text-sm text-gray-600">Effective Fee Rate</p>
             </div>
@@ -349,7 +519,7 @@ export default function StakingDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-sm p-6 text-white">
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-sm p-6 text-white">
         <div className="flex justify-between items-center">
           <div>
             <h3 className="text-lg font-semibold mb-2">Ready to stake more?</h3>
@@ -357,7 +527,11 @@ export default function StakingDashboard() {
               Continue earning rewards through SafeStaking's secure platform with transparent fees.
             </p>
             <p className="text-blue-200 text-sm mt-1">
-              Platform fee: {feePercentage.toFixed(2)}% • Powered by Lido Protocol • Live on Mainnet
+              Platform fee: <NumberFlow 
+                value={animatedValues.feePercentage} 
+                format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+                suffix="% • Powered by Lido Protocol"
+              />
             </p>
           </div>
           <button

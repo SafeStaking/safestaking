@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import NumberFlow from '@number-flow/react';
 import { useStaking } from '../../hooks/useStaking';
 import { useDynamic } from '../../hooks/useDynamic';
 
@@ -163,6 +164,12 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
     return (annualReward / 12).toFixed(6); // Monthly reward
   };
 
+  const formatNumber = (num: string | number): number => {
+    const parsed = typeof num === 'string' ? parseFloat(num) : num;
+    if (isNaN(parsed)) return 0;
+    return parsed;
+  };
+
   // Show loading state while initializing
   if (isLoading) {
     return (
@@ -210,8 +217,6 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
         </div>
       </div>
 
-    
-
       {/* Transaction Confirming State */}
       {txState.showConfirming && (
         <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -241,13 +246,28 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
               <p className="text-green-800 font-medium">Staking Successful! 🎉</p>
               <div className="mt-2 space-y-1 text-sm">
                 <p className="text-green-700">
-                  <span className="font-medium">Amount Staked:</span> {txState.stakeDetails.stakeAmount} ETH
+                  <span className="font-medium">Amount Staked:</span> 
+                  <NumberFlow 
+                    value={formatNumber(txState.stakeDetails.stakeAmount)} 
+                    format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                    suffix=" ETH"
+                  />
                 </p>
                 <p className="text-green-700">
-                  <span className="font-medium">Platform Fee:</span> {txState.stakeDetails.feeAmount} ETH
+                  <span className="font-medium">Platform Fee:</span> 
+                  <NumberFlow 
+                    value={formatNumber(txState.stakeDetails.feeAmount)} 
+                    format={{ minimumFractionDigits: 6, maximumFractionDigits: 6 }}
+                    suffix=" ETH"
+                  />
                 </p>
                 <p className="text-green-700">
-                  <span className="font-medium">stETH Received:</span> {txState.stakeDetails.stETHReceived} stETH
+                  <span className="font-medium">stETH Received:</span> 
+                  <NumberFlow 
+                    value={formatNumber(txState.stakeDetails.stETHReceived)} 
+                    format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                    suffix=" stETH"
+                  />
                 </p>
                 <p className="text-green-600">
                   <span className="font-medium">Transaction:</span>
@@ -346,42 +366,90 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">You pay:</span>
-                <span className="font-medium">{amount} ETH</span>
+                <span className="font-medium">
+                  <NumberFlow 
+                    value={formatNumber(amount)} 
+                    format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                    suffix=" ETH"
+                  />
+                </span>
               </div>
               
               <div className="flex justify-between border-t pt-2">
                 <span className="text-gray-600">SafeStaking fee ({feeBreakdown.feePercentage.toFixed(2)}%):</span>
-                <span className="font-medium text-orange-600">-{feeBreakdown.feeAmount} ETH</span>
+                <span className="font-medium text-orange-600">
+                  -<NumberFlow 
+                    value={formatNumber(feeBreakdown.feeAmount)} 
+                    format={{ minimumFractionDigits: 6, maximumFractionDigits: 6 }}
+                    suffix=" ETH"
+                  />
+                </span>
               </div>
               
               <div className="flex justify-between">
                 <span className="text-gray-600">Amount staked with Lido:</span>
-                <span className="font-medium text-green-600">{feeBreakdown.stakeAmount} ETH</span>
+                <span className="font-medium text-green-600">
+                  <NumberFlow 
+                    value={formatNumber(feeBreakdown.stakeAmount)} 
+                    format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                    suffix=" ETH"
+                  />
+                </span>
               </div>
               
               <div className="flex justify-between">
                 <span className="text-gray-600">You receive:</span>
-                <span className="font-medium">~{feeBreakdown.stakeAmount} stETH</span>
+                <span className="font-medium">
+                  ~<NumberFlow 
+                    value={formatNumber(feeBreakdown.stakeAmount)} 
+                    format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+                    suffix=" stETH"
+                  />
+                </span>
               </div>
               
               <div className="flex justify-between">
                 <span className="text-gray-600">Estimated Gas:</span>
-                <span className="font-medium text-red-600">{estimatedGas} ETH</span>
+                <span className="font-medium text-red-600">
+                  <NumberFlow 
+                    value={formatNumber(estimatedGas)} 
+                    format={{ minimumFractionDigits: 6, maximumFractionDigits: 6 }}
+                    suffix=" ETH"
+                  />
+                </span>
               </div>
               
               <div className="flex justify-between">
                 <span className="text-gray-600">Current APR:</span>
-                <span className="font-medium text-green-600">3.20%</span>
+                <span className="font-medium text-green-600">
+                  <NumberFlow 
+                    value={3.20} 
+                    format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+                    suffix="%"
+                  />
+                </span>
               </div>
               
               <div className="flex justify-between border-t pt-2">
                 <span className="text-gray-600">Est. monthly rewards:</span>
-                <span className="font-medium text-green-600">+{calculateRewards()} ETH</span>
+                <span className="font-medium text-green-600">
+                  +<NumberFlow 
+                    value={formatNumber(calculateRewards())} 
+                    format={{ minimumFractionDigits: 6, maximumFractionDigits: 6 }}
+                    suffix=" ETH"
+                  />
+                </span>
               </div>
               
               <div className="flex justify-between border-t pt-2 font-medium">
                 <span className="text-gray-900">Total Cost:</span>
-                <span className="text-red-600">{(parseFloat(amount) + parseFloat(estimatedGas)).toFixed(6)} ETH</span>
+                <span className="text-red-600">
+                  <NumberFlow 
+                    value={formatNumber(amount) + formatNumber(estimatedGas)} 
+                    format={{ minimumFractionDigits: 6, maximumFractionDigits: 6 }}
+                    suffix=" ETH"
+                  />
+                </span>
               </div>
             </div>
           </div>
@@ -410,7 +478,7 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
             showMinimumError ||
             showInsufficientError
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-blue-500'
+              : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500'
           }`}
         >
           {isStaking || txState.showConfirming ? (
@@ -448,7 +516,7 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
             </svg>
             <h4 className="font-medium text-green-900">Transparent Fees</h4>
           </div>
-          <p className="text-sm text-green-800">
+           <p className="text-sm text-green-800">
             Platform fee: {feePercentage.toFixed(2)}% - clearly displayed before each transaction with detailed breakdown.
           </p>
         </div>
