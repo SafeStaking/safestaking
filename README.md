@@ -1,179 +1,175 @@
 # SafeStaking - Ethereum Liquid Staking Platform
 
-A Next.js-based liquid staking platform that allows users to stake ETH using Lido's protocol and receive stETH tokens in return.
+A Next.js-based liquid staking platform that allows users to stake ETH through a secure wrapper contract and receive stETH tokens with transparent fee structure.
 
-## Features
+## 🚀 Features
 
 - 🔐 **Multi-Auth Support**: Email, social login, and wallet connection via Dynamic.xyz
-- 💰 **Liquid Staking**: Stake ETH and receive liquid stETH tokens
-- 📊 **Dashboard**: Real-time staking statistics and portfolio overview
-- 📈 **Activity Tracking**: View staking history and rewards
-- 🔒 **Secure**: Built on Lido's proven liquid staking protocol
-- 📱 **Responsive**: Works on desktop and mobile devices
+- 💰 **Liquid Staking**: Stake ETH through SafeStaking wrapper with transparent fees
+- 📊 **Real-time Dashboard**: Live staking statistics, portfolio overview, and animated number displays
+- 📈 **Activity Tracking**: View staking history, rewards, and fee transparency
+- 🔒 **Secure Wrapper**: Custom smart contract for enhanced fee management
+- 📱 **Responsive Design**: Optimized for desktop and mobile devices
+- ✨ **Smooth Animations**: NumberFlow integration for enhanced UX
 
-## Tech Stack
+## 🛠 Tech Stack
 
 - **Frontend**: Next.js 14, TypeScript, Tailwind CSS
 - **Authentication**: Dynamic.xyz (supports email, social, and wallet logins)
 - **Blockchain**: Ethers.js for Ethereum interaction
-- **Staking**: Lido liquid staking protocol
+- **Staking**: Lido liquid staking protocol with SafeStaking wrapper
+- **Animations**: NumberFlow React for smooth number transitions
 - **Deployment**: Vercel
 
-## Quick Start
 
-### 1. Clone and Install
-
-```bash
-git clone <your-repo-url>
-cd safestaking
-npm install
-```
-
-### 2. Environment Setup
-
-Create a `.env.local` file in the root directory:
-
-```bash
-cp .env.local.example .env.local
-```
-
-Add your Dynamic.xyz environment ID:
-
-```env
-NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID=your_dynamic_environment_id_here
-```
-
-### 3. Get Dynamic.xyz Credentials
-
-1. Go to [Dynamic.xyz](https://app.dynamic.xyz/)
-2. Create a new project
-3. Copy your Environment ID
-4. Enable Ethereum wallet connectors
-5. Configure email/social login providers as needed
-
-### 4. Run Development Server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 src/
 ├── components/
 │   ├── auth/           # Authentication components
-│   ├── dashboard/      # Dashboard components
-│   ├── staking/        # Staking interface components
-│   └── ui/            # Reusable UI components
-├── hooks/             # Custom React hooks
-├── lib/               # Utility functions and configurations
-├── pages/             # Next.js pages
-├── providers/         # Context providers
-├── styles/           # Global styles
-└── types/            # TypeScript type definitions
+│   ├── dashboard/      # Dashboard components (StakingDashboard.tsx)
+│   └── staking/        # Staking interface (StakeForm.tsx)
+├── hooks/
+│   ├── useStaking.ts   # Main staking hook with contract integration
+│   └── useDynamic.ts   # Dynamic.xyz authentication hook
+├── lib/                # Utility functions and configurations
+├── pages/            
+├── providers/          # Context providers
+├── styles/             # Global styles
+└── types/              # TypeScript type definitions
 ```
 
-## Key Components
+## 🔑 Key Components
 
-### Authentication
-- Uses Dynamic.xyz for seamless wallet connection
-- Supports email, social (Google, GitHub), and wallet authentication
-- Handles wallet connection state management
+### Authentication System
+- **Dynamic.xyz Integration**: Seamless wallet connection
+- **Multi-provider Support**: Email, social (Google, GitHub), and direct wallet authentication
+- **State Management**: Persistent wallet connection handling
 
-### Staking Interface
-- **StakeForm**: Main staking interface for ETH → stETH conversion
-- **StakingDashboard**: Overview of staking positions and rewards
-- Real-time balance updates and APR display
+### Staking Dashboard (`StakingDashboard.tsx`)
+- **Real-time Data**: Live ETH/stETH balances and platform statistics
+- **Animated Numbers**: Smooth transitions using NumberFlow React
+- **Portfolio Overview**: Comprehensive view of staking positions and rewards
+- **Fee Transparency**: Clear breakdown of platform fees and effective rates
 
-### Smart Contract Integration
-- Connects to Lido's stETH contract (`0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84`)
-- Handles ETH staking transactions
-- Fetches user balances and staking data
+### Staking Interface (`StakeForm.tsx`)
+- **Interactive Form**: Real-time fee calculation and gas estimation
+- **Transaction Breakdown**: Detailed preview before confirmation
+- **Success Feedback**: Animated transaction confirmation with details
+- **Validation**: Input validation with helpful error messages
 
-## Usage
+### Smart Contract Integration (`useStaking.ts`)
+- **SafeStaking Wrapper**: Custom contract for transparent fee collection
+- **Lido Integration**: Direct interaction with Lido's stETH protocol
+- **Gas Optimization**: Intelligent gas estimation and fee calculation
+- **Error Handling**: Comprehensive error management and user feedback
 
-1. **Connect Wallet**: Use email, social login, or direct wallet connection
-2. **View Dashboard**: Check your staking stats and rewards
-3. **Stake ETH**: Enter amount and confirm transaction
-4. **Receive stETH**: Get liquid staking tokens that earn rewards
-5. **Track Performance**: Monitor your staking history and returns
+## 🏗 Smart Contract Architecture
 
-## Configuration
+### SafeStaking Wrapper Contract
+- **Address**: `0x0D9EfFbc5D0C09d7CAbDc5d052250aDd25EcC19f`
+- **Purpose**: Transparent fee collection before forwarding to Lido
+- **Fee Structure**: 0.50% platform fee with clear breakdown
+- **Functions**:
+  - `stake()`: Main staking function with fee deduction
+  - `calculateFee()`: Returns fee breakdown for any amount
+  - `getUserStats()`: Individual user staking statistics
+  - `getContractStats()`: Platform-wide statistics
 
-### Environment Variables
-
-- `NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID`: Required for Dynamic.xyz authentication
-- `NEXT_PUBLIC_GRAPH_API_KEY`: Optional, for enhanced data queries
-- `NEXT_PUBLIC_INFURA_API_KEY`: Optional, for better RPC performance
-
-### Network Configuration
-
-The app is configured for Ethereum Mainnet by default. The Lido contract addresses are:
+### Lido stETH Integration
 - **stETH Contract**: `0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84`
+- **Liquid Staking**: Receive tradeable stETH tokens
+- **Auto-compounding**: Automatic reward accrual
+- **Current APR**: ~3.2% (Lido's current rate)
 
-## Deployment
+## 💫 NumberFlow Animation Features
 
-### Vercel (Recommended)
+### Dashboard Animations
+- **Load Animation**: Numbers count up from 0 when page loads
+- **Refresh Animation**: Reset to 0 and animate to new values on refresh
+- **Real-time Updates**: Smooth transitions when data changes
+- **Format Options**: Different precision levels (4 decimals for ETH, 6 for fees)
 
-1. Connect your GitHub repository to Vercel
-2. Add environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
-
-### Manual Deployment
-
-```bash
-npm run build
-npm start
+### Implementation Example
+```typescript
+<NumberFlow 
+  value={animatedValue} 
+  format={{ minimumFractionDigits: 4, maximumFractionDigits: 4 }}
+  suffix=" ETH"
+/>
 ```
 
-## Development Notes
+## 🎯 Usage Guide
 
-### Current Implementation Status
+### Getting Started
+1. **Connect Wallet**: Choose from email, social login, or direct wallet connection
+2. **View Dashboard**: Check your current staking positions and platform statistics
+3. **Stake ETH**: Navigate to staking form and enter desired amount
+4. **Review Transaction**: Check fee breakdown and confirm details
+5. **Receive stETH**: Get liquid staking tokens that automatically earn rewards
 
-✅ **Completed**:
-- Authentication system with Dynamic.xyz
-- Basic UI/UX with Tailwind CSS
-- Wallet connection and user management
-- Dashboard with mock data
-- Staking form interface
+### Fee Structure
+- **Platform Fee**: 0.50% of staked amount
+- **Gas Fees**: Standard Ethereum network fees
+- **No Exit Fees**: Freely trade or use your stETH tokens
+- **Transparent Reporting**: All fees clearly displayed before and after transactions
 
-🚧 **In Progress/Next Steps**:
-- Live contract integration with Lido
-- Real-time data fetching from The Graph
-- Custom wrapper contract for additional features
-- Enhanced error handling and user feedback
-- Mobile optimization
+### Monitoring Your Investment
+- **Real-time Balances**: Updated ETH and stETH balances
+- **Reward Tracking**: Daily and yearly projected rewards
+- **Fee History**: Complete breakdown of all fees paid
+- **Performance Metrics**: Effective fee rate calculations
 
-### Testing
+## 🔒 Security Features
 
-The current version includes mock data for development. For production:
+### Smart Contract Security
+- **Audited Protocol**: Built on Lido's proven and audited smart contracts
+- **Transparent Fees**: All fee calculations are on-chain and verifiable
+- **No Admin Keys**: Immutable fee structure for user protection
+- **Contract Verification**: All contracts verified on Etherscan
 
-1. Ensure you're connected to Ethereum Mainnet
-2. Have test ETH available for staking
-3. Verify all environment variables are set
-4. Test wallet connections thoroughly
+### Frontend Security
+- **Environment Variables**: Sensitive data properly handled
+- **Input Validation**: Comprehensive form validation and sanitization
+- **Error Handling**: Graceful error management without exposing internals
+- **Wallet Security**: No private key handling or storage
 
-## Security Considerations
+## 📊 Current Implementation Status
 
-- Always verify contract addresses before mainnet deployment
-- Use hardware wallets for large transactions
-- Keep private keys secure and never commit them
-- Test thoroughly on testnets before mainnet use
+### ✅ Completed Features
+- Full authentication system with Dynamic.xyz
+- Complete UI/UX with Tailwind CSS and responsive design
+- Real-time dashboard with animated NumberFlow components
+- Functional staking form with fee calculation
+- Smart contract integration with Lido protocol
+- Custom SafeStaking wrapper contract
+- Gas estimation and transaction handling
+- Error handling and user feedback systems
+- Fee transparency and breakdown features
 
-## Support
+### 🚧 Upcoming Enhancements
+- Historical performance charts
+- Advanced analytics and reporting
+- Enhanced portfolio management
 
-For issues or questions:
-1. Check the Dynamic.xyz documentation for auth issues
-2. Review Lido documentation for staking queries
-3. Create an issue in this repository
 
-## License
+## 📄 License
 
 This project is private and proprietary. All rights reserved.
 
 ---
 
-**Note**: This is an MVP version. Additional features and optimizations will be added based on client feedback and requirements.
+## 🏆 Key Achievements
+
+- **Transparent Fee Structure**: Clear 0.50% platform fee with detailed breakdown
+- **Smooth User Experience**: NumberFlow animations enhance user engagement
+- **Multi-Auth Support**: Flexible authentication options for broad user access
+- **Real-time Data**: Live updates and instant feedback
+- **Production Ready**: Deployed on Ethereum Mainnet with real value transactions
+
+**Built with transparency and security in mind. Powered by Lido Protocol on Ethereum Mainnet.**
+
+---
+
+*© 2025 SafeStaking. Professional liquid staking platform for the Ethereum ecosystem.*

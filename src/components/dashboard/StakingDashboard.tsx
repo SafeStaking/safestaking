@@ -407,8 +407,6 @@ export default function StakingDashboard() {
                     />
                   </span>
                 </div>
-                
-                
 
                 <div className="flex justify-between items-center py-2 border-b">
                   <span className="text-gray-600">Fee Receiver</span>
