@@ -9,28 +9,23 @@ export default function UserStatus() {
   const isConnected = !!user && !!primaryWallet;
 
   if (!isConnected) {
-    return (
-      <div className="flex flex-col items-center space-y-4">
-        <h2 className="text-xl font-semibold">Connect Your Wallet</h2>
-        <DynamicWidget />
-      </div>
-    );
+    return <DynamicWidget />;
   }
 
   return (
-    <div className="flex items-center space-x-4 p-4 bg-green-50 rounded-lg">
-      <div className="flex-1">
-        <p className="font-medium">Connected</p>
-        <p className="text-sm text-gray-600">
+    <div className="flex items-center space-x-3">
+      <div className="text-right">
+        <p className="text-sm font-medium text-gray-900">Connected</p>
+        <p className="text-xs text-gray-600">
           {primaryWallet?.address?.slice(0, 6)}...{primaryWallet?.address?.slice(-4)}
         </p>
         {user?.email && (
-          <p className="text-sm text-gray-600">{user.email}</p>
+          <p className="text-xs text-gray-500">{user.email}</p>
         )}
       </div>
       <button
         onClick={handleLogOut}
-        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+        className="px-3 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
       >
         Disconnect
       </button>

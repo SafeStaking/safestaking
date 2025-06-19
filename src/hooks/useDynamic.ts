@@ -1,37 +1,41 @@
-'use client';
-
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export function useDynamic() {
-  const context = useDynamicContext();
+  const { 
+    user, 
+    primaryWallet, 
+    handleLogOut,
+    isAuthenticated: dynamicIsAuthenticated,
+    walletConnector
+  } = useDynamicContext();
+  
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!context) {
-    return {
-      user: null,
-      isAuthenticated: false,
-      walletAddress: '',
-      walletConnected: false,
-      logout: () => {},
-      mounted: false,
-    };
-  }
-
-  const { user, handleLogOut, primaryWallet } = context;
-  const isAuthenticated = Boolean(user && primaryWallet);
-  const walletAddress = primaryWallet?.address || '';
-
+  // Dynamic Labs connection state
+  const isAuthenticated = !!user && !!primaryWallet;
+  const walletConnected = !!primaryWallet && !!primaryWallet.address;
+  
   return {
+    // User info
     user,
-    isAuthenticated: mounted && isAuthenticated,
-    walletAddress,
-    walletConnected: isAuthenticated && walletAddress.length > 0,
+    primaryWallet,
+    isAuthenticated,
+    walletConnected,
+    walletAddress: primaryWallet?.address,
+    
+    // Actions
     logout: handleLogOut,
+    
+    // State
     mounted,
+    
+    // Debug info
+    dynamicIsAuthenticated,
+    walletConnector
   };
 }
