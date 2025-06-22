@@ -204,15 +204,15 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Stake ETH with SafeStaking</h2>
-        <p className="text-gray-600">
+    <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">Stake ETH</h1>
+        <p className="text-gray-600 mb-2">
           Stake your ETH through our secure wrapper with transparent fee structure.
         </p>
         <div className="mt-2 px-3 py-1 bg-green-100 border border-green-300 rounded-md inline-block">
           <p className="text-sm text-green-800">
-            <span className="font-medium">🚀 Ethereum Mainnet</span> - Live production environment
+            <span className="font-medium mx-2">Ethereum Mainnet</span><span>•</span><span className="font-medium mx-2">0.50% Platform Fee</span><span>•</span><span className="font-medium mx-2">~3.2% Current APR</span>
           </p>
         </div>
       </div>
@@ -519,16 +519,6 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
            <p className="text-sm text-green-800">
             Platform fee: {feePercentage.toFixed(2)}% - clearly displayed before each transaction with detailed breakdown.
           </p>
-        </div>
-      </div>
-
-      {/* Contract Information */}
-      <div className="mt-6 p-4 bg-gray-50 border rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-2">Contract Information</h4>
-        <div className="space-y-1 text-sm text-gray-600">
-          <p><span className="font-medium">SafeStaking Wrapper:</span> 0x0D9EfFbc5D0C09d7CAbDc5d052250aDd25EcC19f</p>
-          <p><span className="font-medium">Lido stETH:</span> 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84</p>
-          <p><span className="font-medium">Network:</span> Ethereum Mainnet (Chain ID: 1)</p>
         </div>
       </div>
     </div>
