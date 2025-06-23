@@ -32,16 +32,16 @@ export default function Header({ currentPage = 'home' }: HeaderProps) {
       <div className="bg-white/70 backdrop-blur-xl border border-white/30 rounded-2xl shadow-lg shadow-black/5">
         <div className="px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-8 ">
               <Link href="/" className="flex items-center">
-                <div className="w-16 h-16">
+                <div className="w-16 h-16 ">
                   <img 
                     src="/logo.svg" 
                     alt="SafeStaking Logo" 
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="text-2xl font-bold mr-5 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                <span className="text-2xl relative -ml-3 mr-3 font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                   SafeStaking
                 </span>
               </Link>

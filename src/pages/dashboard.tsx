@@ -5,6 +5,7 @@ import { useDynamic } from '../hooks/useDynamic';
 import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import Sidebar from '../components/layout/Sidebar';
 import StakingDashboard from '../components/dashboard/StakingDashboard';
 
 export default function Dashboard() {
@@ -46,12 +47,11 @@ export default function Dashboard() {
       </Head>
 
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50">
-        <Header currentPage="dashboard" />
-
-        <main className="pt-20">
-          {!isConnected ? (
-            /* Connection Required */
-            <div className="py-10">
+        {!isConnected ? (
+          <>
+            <Header currentPage="dashboard" />
+            {/* Connection Required */}
+            <div className="pt-20 py-10">
               <div className="max-w-md mx-auto px-4 text-center">
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-white/50">
                   <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-6">
@@ -72,40 +72,47 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-          ) : (
-            /* Dashboard Content */
-            <div className="py-20">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Page Header */}
-                <div className="mb-8">
-                  <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50">
-                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                      <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-                        <p className="text-gray-600">
-                          Monitor your staking performance and rewards.
-                        </p>
-                      </div>
-                      <div className="mt-4 lg:mt-0">
-                        <Link
-                          href="/stake"
-                          className="inline-block px-6 py-3 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition-colors"
-                        >
-                          Stake More
-                        </Link>
+          </>
+        ) : (
+          <>
+            {/* Sidebar Layout */}
+            <div className="flex h-screen">
+              <Sidebar currentPage="dashboard" />
+              
+              {/* Main Content */}
+              <div className="flex-1 md:ml-72 transition-all duration-300">
+                <main className="h-full overflow-y-auto">
+                  <div className="p-4 md:p-8 pt-20 md:pt-8">
+                    {/* Page Header */}
+                    <div className="mb-8">
+                      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50">
+                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                          <div>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+                            <p className="text-gray-600">
+                              Monitor your staking performance and rewards.
+                            </p>
+                          </div>
+                          <div className="mt-4 lg:mt-0">
+                            <Link
+                              href="/stake"
+                              className="inline-block px-6 py-3 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition-colors"
+                            >
+                              Stake More
+                            </Link>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
 
-                {/* Dashboard Component */}
-                <StakingDashboard />
+                    {/* Dashboard Component */}
+                    <StakingDashboard />
+                  </div>
+                </main>
               </div>
             </div>
-          )}
-        </main>
-
-        <Footer />
+          </>
+        )}
       </div>
     </>
   );

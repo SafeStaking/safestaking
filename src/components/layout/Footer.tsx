@@ -22,7 +22,7 @@ export default function Footer() {
                                  className="w-full h-full object-contain"
                                />
                              </div>
-                             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                             <span className="text-2xl relative -ml-3 font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                                SafeStaking
                              </span>
                            </Link>
