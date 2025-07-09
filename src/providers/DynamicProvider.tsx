@@ -20,30 +20,52 @@ export default function DynamicProvider({ children }: DynamicProviderProps) {
         walletConnectors: [EthereumWalletConnectors],
         appName: 'SafeStaking',
         
-        // Mainnet only
+        // Multi-chain support: Ethereum + Avalanche
         overrides: {
-          evmNetworks: [{
-            blockExplorerUrls: ['https://etherscan.io/'],
-            chainId: 1,
-            chainName: 'Ethereum Mainnet',
-            iconUrls: ['https://app.dynamic.xyz/assets/networks/eth.svg'],
-            name: 'Ethereum',
-            nativeCurrency: {
-              decimals: 18,
-              name: 'Ether',
-              symbol: 'ETH',
+          evmNetworks: [
+            {
+              // Ethereum Mainnet
+              blockExplorerUrls: ['https://etherscan.io/'],
+              chainId: 1,
+              chainName: 'Ethereum Mainnet',
+              iconUrls: ['https://app.dynamic.xyz/assets/networks/eth.svg'],
+              name: 'Ethereum',
+              nativeCurrency: {
+                decimals: 18,
+                name: 'Ether',
+                symbol: 'ETH',
+              },
+              networkId: 1,
+              rpcUrls: [
+                process.env.NEXT_PUBLIC_RPC_URL,
+                'https://ethereum.publicnode.com',
+              ].filter(Boolean),
+              vanityName: 'Ethereum Mainnet',
             },
-            networkId: 1,
-            rpcUrls: [
-              process.env.NEXT_PUBLIC_RPC_URL,
-              'https://ethereum.publicnode.com',
-            ].filter(Boolean),
-            vanityName: 'Ethereum Mainnet',
-          }],
+            {
+              // Avalanche C-Chain
+              blockExplorerUrls: ['https://snowtrace.io/'],
+              chainId: 43114,
+              chainName: 'Avalanche C-Chain',
+              iconUrls: ['https://app.dynamic.xyz/assets/networks/avax.svg'],
+              name: 'Avalanche',
+              nativeCurrency: {
+                decimals: 18,
+                name: 'Avalanche',
+                symbol: 'AVAX',
+              },
+              networkId: 43114,
+              rpcUrls: [
+                'https://api.avax.network/ext/bc/C/rpc',
+                'https://avalanche-c-chain.publicnode.com',
+              ],
+              vanityName: 'Avalanche Mainnet',
+            }
+          ],
         },
         
         events: {
-          onAuthSuccess: () => console.log('🚀 Connected to Ethereum Mainnet'),
+          onAuthSuccess: () => console.log('🚀 Connected to wallet'),
           onLogout: () => console.log('👋 Disconnected'),
         },
       }}

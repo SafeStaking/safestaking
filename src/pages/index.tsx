@@ -234,7 +234,7 @@ const Hero = () => {
   const { isAuthenticated, walletConnected, primaryWallet } = useDynamic();
   const isConnected = !!primaryWallet && !!primaryWallet.address;
   
-  const rotatingTexts = ['Stake ETH.', 'Track positions.', 'Manage portfolios.', 'Grow confidently.'];
+  const rotatingTexts = ['Stake Crypto.', 'Track positions.', 'Manage portfolios.', 'Grow confidently.'];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -297,14 +297,14 @@ const Hero = () => {
               </Link>
             )}
             
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="px-6 md:px-8 py-4 md:py-6 text-base md:text-lg font-semibold border-gray-300 hover:border-gray-400 group w-full sm:w-auto"
-            >
-              <Play className="mr-2 h-4 w-4 md:h-5 md:w-5 group-hover:scale-110 transition-transform" />
-              Learn More
-            </Button>
+           <Button 
+            variant="outline" 
+            size="lg" 
+            className="px-6 md:px-8 py-4 md:py-6 text-base md:text-lg font-semibold border-gray-300 hover:border-gray-400 group w-auto"
+          >
+            <Play className="mr-2 h-4 w-4 md:h-5 md:w-5 group-hover:scale-110 transition-transform" />
+            Learn More
+          </Button>
           </div>
         </div>
       </div>

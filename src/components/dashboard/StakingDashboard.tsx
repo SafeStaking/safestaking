@@ -375,52 +375,64 @@ export default function StakingDashboard() {
         </div>
 
         {/* Platform Stats */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/50 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Platform Statistics</h3>
-          
-          <div className="space-y-4">
-            {/* Show real contract stats or loading message */}
-            {contractStats ? (
-              <>
-                {/* Total Staked */}
-                <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                  <span className="text-gray-600">Total ETH Staked</span>
-                  <span className="font-medium">
-                    <NumberFlow 
-                      value={animatedValues.totalStaked} 
-                      format={{ 
-                        minimumFractionDigits: 3, 
-                        maximumFractionDigits: 3,
-                        notation: animatedValues.totalStaked >= 1000 ? 'compact' : 'standard'
-                      }}
-                      suffix=" ETH"
-                    />
-                  </span>
-                </div>
+<div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/50 p-6">
+  <h3 className="text-lg font-semibold text-gray-900 mb-6">Platform Statistics</h3>
+  
+  <div className="space-y-4">
+    {/* Show real contract stats or error message */}
+    {contractStats ? (
+      <>
+        {/* Total Staked */}
+        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+          <span className="text-gray-600">Total ETH Staked</span>
+          <span className="font-medium">
+            <NumberFlow 
+              value={animatedValues.totalStaked} 
+              format={{ 
+                minimumFractionDigits: 3, 
+                maximumFractionDigits: 3,
+                notation: animatedValues.totalStaked >= 1000 ? 'compact' : 'standard'
+              }}
+              suffix=" ETH"
+            />
+          </span>
+        </div>
 
-                {/* Total stETH Distributed */}
-                <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                  <span className="text-gray-600">Total stETH Distributed</span>
-                  <span className="font-medium">
-                    <NumberFlow 
-                      value={animatedValues.totalStethDistributed} 
-                      format={{ 
-                        minimumFractionDigits: 3, 
-                        maximumFractionDigits: 3,
-                        notation: animatedValues.totalStethDistributed >= 1000 ? 'compact' : 'standard'
-                      }}
-                      suffix=" stETH"
-                    />
-                  </span>
-                </div>
+        {/* Total stETH Distributed */}
+        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+          <span className="text-gray-600">Total stETH Distributed</span>
+          <span className="font-medium">
+            <NumberFlow 
+              value={animatedValues.totalStethDistributed} 
+              format={{ 
+                minimumFractionDigits: 3, 
+                maximumFractionDigits: 3,
+                notation: animatedValues.totalStethDistributed >= 1000 ? 'compact' : 'standard'
+              }}
+              suffix=" stETH"
+            />
+          </span>
+        </div>
+        
+        {/* Total Users */}
+        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+          <span className="text-gray-600">Total Users</span>
+          <span className="font-medium">
+            <NumberFlow 
+              value={animatedValues.totalUsers} 
+              format={{ notation: 'standard' }}
+            />
+          </span>
+        </div>
                 
-                {/* Total Users */}
+                {/* Platform Fee */}
                 <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                  <span className="text-gray-600">Total Users</span>
-                  <span className="font-medium">
+                  <span className="text-gray-600">Platform Fee</span>
+                  <span className="font-medium text-orange-600">
                     <NumberFlow 
-                      value={animatedValues.totalUsers} 
-                      format={{ notation: 'standard' }}
+                      value={animatedValues.feePercentage} 
+                      format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+                      suffix="%"
                     />
                   </span>
                 </div>
@@ -447,8 +459,30 @@ export default function StakingDashboard() {
               </>
             ) : (
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400 mx-auto mb-2"></div>
-                <p className="text-gray-500 text-sm">Loading platform statistics...</p>
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400 mx-auto mb-2"></div>
+                    <p className="text-gray-500 text-sm">Loading platform statistics...</p>
+                  </>
+                ) : (
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center justify-center">
+                      <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div className="text-left">
+                        <p className="text-red-800 font-medium text-sm">Failed to load platform stats</p>
+                        <p className="text-red-600 text-xs mt-1">Please check your connection and try again</p>
+                        <button 
+                          onClick={handleRefresh}
+                          className="mt-2 text-red-700 hover:text-red-900 text-xs underline"
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             
@@ -468,6 +502,7 @@ export default function StakingDashboard() {
             </div>
           </div>
         </div>
+        
       </div>
 
       {/* Fee Transparency Section - Only show if user has staking history */}

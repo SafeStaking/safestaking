@@ -18,7 +18,9 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
     calculateFee,
     hasSufficientBalance,
     feePercentage,
-    isLoading 
+    isLoading,
+    balance,
+    refreshData
   } = useStaking();
 
   const [amount, setAmount] = useState('');
@@ -173,7 +175,7 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
   // Show loading state while initializing
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
           <div className="h-4 bg-gray-200 rounded w-1/2 mb-6"></div>
@@ -187,7 +189,7 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
   // Show wallet connection prompt if not connected
   if (!walletConnected) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50">
         <div className="text-center">
           <div className="mb-4">
             <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,10 +214,42 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
         </p>
         <div className="mt-2 px-3 py-1 bg-green-100 border border-green-300 rounded-md inline-block">
           <p className="text-sm text-green-800">
-            <span className="font-medium mx-2">Ethereum Mainnet</span><span>•</span><span className="font-medium mx-2">0.50% Platform Fee</span><span>•</span><span className="font-medium mx-2">~3.2% Current APR</span>
+            <span className="font-medium mx-2">Ethereum Mainnet</span><span>•</span>
+            <span className="font-medium mx-2">{feePercentage.toFixed(2)}% Platform Fee</span><span>•</span>
+            <span className="font-medium mx-2">~3.2% Current APR</span>
           </p>
         </div>
       </div>
+
+      {/* Balance Display */}
+      {balance && (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="font-medium text-blue-900 mb-2">Your ETH Balance</h3>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="text-blue-700">ETH Balance:</p>
+              <p className="font-medium">
+                <NumberFlow 
+                  value={parseFloat(balance.ethBalance)} 
+                  format={{ minimumFractionDigits: 4 }}
+                  suffix=" ETH"
+                />
+              </p>
+            </div>
+            <div>
+              <p className="text-blue-700">Available to Stake:</p>
+              <p className="font-medium">
+                <NumberFlow 
+                  value={Math.max(0, parseFloat(balance.ethBalance) - 0.003)} 
+                  format={{ minimumFractionDigits: 4 }}
+                  suffix=" ETH"
+                />
+              </p>
+              <p className="text-xs text-blue-600">(minus gas estimate)</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Transaction Confirming State */}
       {txState.showConfirming && (
@@ -512,13 +546,35 @@ export default function StakeForm({ onStakeSuccess }: StakeFormProps) {
         <div className="bg-green-50 rounded-lg p-4">
           <div className="flex items-center mb-2">
             <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 002 2z" />
             </svg>
             <h4 className="font-medium text-green-900">Transparent Fees</h4>
           </div>
            <p className="text-sm text-green-800">
             Platform fee: {feePercentage.toFixed(2)}% - clearly displayed before each transaction with detailed breakdown.
           </p>
+        </div>
+      </div>
+
+      {/* Network Status */}
+      <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-gray-600">Network Status:</span>
+          <div className="flex items-center">
+            <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+            <span className="text-green-600 font-medium">Ethereum Mainnet</span>
+          </div>
+        </div>
+        <div className="flex items-center justify-between text-sm mt-1">
+          <span className="text-gray-600">Contract:</span>
+          <a 
+            href="https://etherscan.io/address/0x0D9EfFbc5D0C09d7CAbDc5d052250aDd25EcC19f"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-blue-600 hover:text-blue-700 text-xs"
+          >
+            0x0D9E...C19f
+          </a>
         </div>
       </div>
     </div>

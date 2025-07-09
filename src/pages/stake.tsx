@@ -8,12 +8,15 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Sidebar from '../components/layout/Sidebar';
 import StakeForm from '../components/staking/StakeForm';
+import AvalancheStakeForm from '../components/staking/AvalancheStakeForm';
+import ChainSelector from '../components/ui/ChainSelector';
 
 export default function Stake() {
   const { isAuthenticated, walletConnected, primaryWallet, user, mounted } = useDynamic();
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [selectedChain, setSelectedChain] = useState<'ethereum' | 'avalanche'>('ethereum');
   
   // True connection state
   const isConnected = !!primaryWallet && !!primaryWallet.address && !!user;
@@ -30,7 +33,7 @@ export default function Stake() {
 
   // Handle successful staking
   const handleStakeSuccess = (txHash: string, amount: string) => {
-    console.log('Stake successful:', { txHash, amount });
+    console.log('Stake successful:', { txHash, amount, chain: selectedChain });
     setShowSuccess(true);
     
     setTimeout(() => {
@@ -53,10 +56,10 @@ export default function Stake() {
   return (
     <>
       <Head>
-        <title>Stake ETH - SafeStaking</title>
-        <meta name="description" content="Stake your ETH securely through SafeStaking's transparent wrapper with Lido integration." />
+        <title>Stake ETH & AVAX - SafeStaking</title>
+        <meta name="description" content="Stake your ETH and AVAX securely through SafeStaking's multi-chain platform with transparent fees." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-         <link rel="icon" type="image/png" href="/fav.png" />
+        <link rel="icon" type="image/png" href="/fav.png" />
       </Head>
 
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50">
@@ -64,7 +67,7 @@ export default function Stake() {
           <>
             <Header currentPage="stake" />
             {/* Connection Required */}
-            <div className="pt-20 py-10">
+            <div className="pt-40 py-10">
               <div className="max-w-md mx-auto px-4 text-center">
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-white/50">
                   <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-6">
@@ -76,11 +79,13 @@ export default function Stake() {
                     Connect to start staking
                   </h2>
                   <p className="text-gray-600 mb-8">
-                    Connect your wallet to start staking ETH through SafeStaking's secure platform.
+                    Connect your wallet to start staking ETH and AVAX through SafeStaking's secure multi-chain platform.
                   </p>
+                  <div className="flex items-center justify-center">
                   <DynamicWidget />
+                  </div>
                   <p className="text-sm text-gray-500 mt-6">
-                    New to liquid staking? <Link href="/#how-it-works" className="text-blue-600 hover:text-blue-700">Learn how it works</Link>
+                    New to staking? <Link href="/#how-it-works" className="text-blue-600 hover:text-blue-700">Learn how it works</Link>
                   </p>
                 </div>
               </div>
@@ -113,33 +118,65 @@ export default function Stake() {
                       </div>
                     )}
 
-                    {/* Staking Form */}
+                    {/* Staking Interface */}
                     <div className="max-w-2xl mx-auto">
-                      <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/50 overflow-hidden">
-                        <StakeForm onStakeSuccess={handleStakeSuccess} />
-                      </div>
+                      {/* Chain Selector */}
+                      <ChainSelector 
+                        selectedChain={selectedChain}
+                        onChainChange={setSelectedChain}
+                        className="mb-6"
+                      />
+
+                      {/* Conditional Form Rendering */}
+                      {selectedChain === 'ethereum' ? (
+                        <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/50 overflow-hidden">
+                          <StakeForm onStakeSuccess={handleStakeSuccess} />
+                        </div>
+                      ) : (
+                        <AvalancheStakeForm onStakeSuccess={handleStakeSuccess} />
+                      )}
 
                       {/* Info Section */}
                       <div className="mt-8">
                         <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
-                              <h3 className="font-semibold text-gray-900 mb-4">How it works</h3>
-                              <ol className="space-y-2 text-sm text-gray-600">
-                                <li>1. Send ETH to our transparent wrapper</li>
-                                <li>2. We collect 0.50% platform fee</li>
-                                <li>3. Remaining ETH staked with Lido</li>
-                                <li>4. Receive liquid stETH tokens</li>
-                              </ol>
+                              <h3 className="font-semibold text-gray-900 mb-4">
+                                {selectedChain === 'ethereum' ? 'How it works' : 'Avalanche Staking'}
+                              </h3>
+                              {selectedChain === 'ethereum' ? (
+                                <ol className="space-y-2 text-sm text-gray-600">
+                                  <li>1. Send ETH to our transparent wrapper</li>
+                                  <li>2. We collect 0.50% platform fee</li>
+                                  <li>3. Remaining ETH staked with Lido</li>
+                                  <li>4. Receive liquid stETH tokens</li>
+                                </ol>
+                              ) : (
+                                <ol className="space-y-2 text-sm text-gray-600">
+                                  <li>1. Connect to Avalanche network</li>
+                                  <li>2. Delegate to Stakely validator</li>
+                                  <li>3. Earn 6.72% APR rewards</li>
+                                  <li>4. 0% SafeStaking fee (launch promo)</li>
+                                </ol>
+                              )}
                             </div>
                             <div>
                               <h3 className="font-semibold text-gray-900 mb-4">Benefits</h3>
-                              <ul className="space-y-2 text-sm text-gray-600">
-                                <li>• Liquid staking - keep tokens tradeable</li>
-                                <li>• Auto-compounding rewards</li>
-                                <li>• Use in DeFi protocols</li>
-                                <li>• No lock-up periods</li>
-                              </ul>
+                              {selectedChain === 'ethereum' ? (
+                                <ul className="space-y-2 text-sm text-gray-600">
+                                  <li>• Liquid staking - keep tokens tradeable</li>
+                                  <li>• Auto-compounding rewards</li>
+                                  <li>• Use in DeFi protocols</li>
+                                  <li>• No lock-up periods</li>
+                                </ul>
+                              ) : (
+                                <ul className="space-y-2 text-sm text-gray-600">
+                                  <li>• Higher APR (6.72% vs ~3.2%)</li>
+                                  <li>• Professional Stakely validator</li>
+                                  <li>• No slashing risk on Avalanche</li>
+                                  <li>• Direct blockchain interaction</li>
+                                </ul>
+                              )}
                             </div>
                           </div>
 
@@ -150,14 +187,25 @@ export default function Stake() {
                                 View Dashboard
                               </Link>
                               <span className="text-gray-300">•</span>
-                              <a
-                                href="https://etherscan.io/address/0x0D9EfFbc5D0C09d7CAbDc5d052250aDd25EcC19f"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-700"
-                              >
-                                View Contract
-                              </a>
+                              {selectedChain === 'ethereum' ? (
+                                <a
+                                  href="https://etherscan.io/address/0x0D9EfFbc5D0C09d7CAbDc5d052250aDd25EcC19f"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-700"
+                                >
+                                  View ETH Contract
+                                </a>
+                              ) : (
+                                <a
+                                  href="https://snowtrace.io/validator/NodeID-6na5rkzi37wtt5piHV62y11XYfN2kTsTH"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-700"
+                                >
+                                  View Stakely Validator
+                                </a>
+                              )}
                               <span className="text-gray-300">•</span>
                               <Link href="/#how-it-works" className="text-blue-600 hover:text-blue-700">
                                 Learn More

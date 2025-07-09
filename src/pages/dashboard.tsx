@@ -6,7 +6,7 @@ import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Sidebar from '../components/layout/Sidebar';
-import StakingDashboard from '../components/dashboard/StakingDashboard';
+import MultiChainDashboard from '../components/dashboard/MultiChainDashboard';
 
 export default function Dashboard() {
   const { isAuthenticated, walletConnected, primaryWallet, user, mounted } = useDynamic();
@@ -15,12 +15,12 @@ export default function Dashboard() {
   // True connection state
   const isConnected = !!primaryWallet && !!primaryWallet.address && !!user;
 
-  // Handle loading state - give more time for wallet to connect
+  // Handle loading state
   useEffect(() => {
     if (mounted) {
       const timer = setTimeout(() => {
         setIsInitialized(true);
-      }, 1000); // Increased timeout for better connection detection
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [mounted]);
@@ -40,10 +40,10 @@ export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>SafeStaking Dashboard</title>
-        <meta name="description" content="Monitor your ETH staking performance, rewards, and platform statistics." />
+        <title>Multi-Chain Dashboard - SafeStaking</title>
+        <meta name="description" content="Monitor your ETH and AVAX staking performance, rewards, and portfolio across multiple chains." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-         <link rel="icon" type="image/png" href="/fav.png" />
+        <link rel="icon" type="image/png" href="/fav.png" />
       </Head>
 
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50">
@@ -51,7 +51,7 @@ export default function Dashboard() {
           <>
             <Header currentPage="dashboard" />
             {/* Connection Required */}
-            <div className="pt-20 py-10">
+            <div className="pt-40 py-10">
               <div className="max-w-md mx-auto px-4 text-center">
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-white/50">
                   <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-6">
@@ -63,9 +63,11 @@ export default function Dashboard() {
                     Connect your wallet
                   </h2>
                   <p className="text-gray-600 mb-8">
-                    Connect your wallet to view your staking dashboard and monitor performance.
+                    Connect your wallet to view your multi-chain staking dashboard and monitor performance across Ethereum and Avalanche.
                   </p>
+                  <div className="flex items-center justify-center">
                   <DynamicWidget />
+                  </div>
                   <p className="text-sm text-gray-500 mt-6">
                     New to SafeStaking? <Link href="/" className="text-blue-600 hover:text-blue-700">Learn more</Link>
                   </p>
@@ -83,30 +85,8 @@ export default function Dashboard() {
               <div className="flex-1 md:ml-72 transition-all duration-300">
                 <main className="h-full overflow-y-auto">
                   <div className="p-4 md:p-8 pt-20 md:pt-8">
-                    {/* Page Header */}
-                    <div className="mb-8">
-                      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50">
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                          <div>
-                            <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-                            <p className="text-gray-600">
-                              Monitor your staking performance and rewards.
-                            </p>
-                          </div>
-                          <div className="mt-4 lg:mt-0">
-                            <Link
-                              href="/stake"
-                              className="inline-block px-6 py-3 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition-colors"
-                            >
-                              Stake More
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Dashboard Component */}
-                    <StakingDashboard />
+                    {/* Multi-Chain Dashboard Component */}
+                    <MultiChainDashboard />
                   </div>
                 </main>
               </div>

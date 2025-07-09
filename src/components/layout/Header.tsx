@@ -21,7 +21,7 @@ export default function Header({ currentPage = 'home' }: HeaderProps) {
     { name: 'How It Works', href: '/#how-it-works', key: 'how-it-works' },
     ...(isConnected ? [
       { name: 'Dashboard', href: '/dashboard', key: 'dashboard' },
-      { name: 'Stake ETH', href: '/stake', key: 'stake' },
+      { name: 'Stake', href: '/stake', key: 'stake' },
     ] : []),
     { name: 'Blog', href: '/blog', key: 'blog' },
      { name: 'FAQ', href: '/#faq', key: 'faq' },

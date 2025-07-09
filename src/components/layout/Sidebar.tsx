@@ -83,10 +83,10 @@ export default function Sidebar({ currentPage = 'dashboard' }: SidebarProps) {
     },
     {
       id: 'stake',
-      name: 'Stake ETH',
+      name: 'Stake ',
       href: '/stake',
       icon: StakeIcon,
-      description: 'Stake your ETH'
+      description: 'Stake your Crypto'
     },
     {
       id: 'history',
